@@ -15,8 +15,5 @@ public class Main {
 				}
 			}
 		});
-		
-		//Nota para hacer un main principal y buscar diseños para colocar a los botones, tablas...
-	
 	}
 }
