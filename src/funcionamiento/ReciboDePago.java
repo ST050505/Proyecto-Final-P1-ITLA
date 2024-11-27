@@ -51,5 +51,4 @@ public class ReciboDePago extends Documento implements ManejadorDePagos {
 	public boolean validarMontoPago(Factura factura, double monto) {
 		return false;
 	}
-
 }

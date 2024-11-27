@@ -38,5 +38,4 @@ public class Producto implements ManejadorDeInventario {
 	public Producto consultarProducto(int idProducto) {
 		return null;
 	}
-
 }

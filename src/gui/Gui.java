@@ -1,5 +1,7 @@
 package gui;
 
+// amamos a Hello Kitty <3
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

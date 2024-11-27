@@ -48,5 +48,4 @@ public class Factura extends Documento implements ManejadorDeFacturacion{
 	public double calcularTotales(Factura factura) {
 		return 0;
 	}
-
 }

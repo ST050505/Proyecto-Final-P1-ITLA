@@ -29,5 +29,4 @@ public class Cliente implements ManejadorDeClientes {
 	public void actualizarCliente(Cliente cliente) {
 		
 	}
-
 }
