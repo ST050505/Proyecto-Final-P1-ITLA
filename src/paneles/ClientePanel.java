@@ -3,6 +3,7 @@ package paneles;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import gui.*;
 
 public class ClientePanel extends JPanel {
 	
@@ -11,7 +12,7 @@ public class ClientePanel extends JPanel {
 	private JButton btnNuevo, btnImprimir;
 	private JScrollPane scrollPane;
 	
-    public ClientePanel() {
+    public ClientePanel(JPanel Mainpanel) {
         this.setBackground(Color.WHITE);
         setLayout(null);
         

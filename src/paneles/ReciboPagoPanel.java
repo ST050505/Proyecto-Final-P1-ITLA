@@ -12,7 +12,7 @@ public class ReciboPagoPanel extends JPanel {
 	private JButton btnNuevo, btnImprimir;
 	private JScrollPane scrollPane;
 	
-    public ReciboPagoPanel() {
+    public ReciboPagoPanel(JPanel Mainpanel) {
     	
         this.setBackground(Color.WHITE);
         setLayout(null);
