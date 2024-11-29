@@ -2,26 +2,29 @@ package paneles;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 
 public class InventarioPanel extends JPanel {
+	
 	private DefaultTableModel model;
 	private JTable Productos;
+	private JLabel lblProductos;
+	private JButton btnNuevo, btnImprimir;
+	private JScrollPane scrollPane;
 	
     public InventarioPanel() {
     	
         this.setBackground(Color.WHITE);
         setLayout(null);
         
-        JLabel lblNewLabel = new JLabel("Productos");
-        lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblNewLabel.setBounds(50, 119, 600, 34);
-        add(lblNewLabel);
+        lblProductos = new JLabel("Productos");
+        lblProductos.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblProductos.setBounds(50, 119, 600, 34);
+        add(lblProductos);
         
-        JButton btnNewButton = new JButton("Nuevo");
-        btnNewButton.setBounds(50, 85, 89, 23);
-        this.add(btnNewButton);
+        btnNuevo = new JButton("Nuevo");
+        btnNuevo.setBounds(50, 85, 89, 23);
+        this.add(btnNuevo);
        
         model = new DefaultTableModel();
         model.addColumn("Referencia");
@@ -31,14 +34,12 @@ public class InventarioPanel extends JPanel {
         
         Productos = new JTable(model);
         Productos.setForeground(Color.WHITE);
-        JScrollPane scrollPane = new JScrollPane(Productos);
+        scrollPane = new JScrollPane(Productos);
         scrollPane.setBounds(50, 150, 600, 300);  
         this.add(scrollPane);
         
-        JButton btnNewButton_1 = new JButton("Imprimir");
-        btnNewButton_1.setBounds(149, 85, 89, 23);
-        add(btnNewButton_1);
-        
-        System.out.print("algo mas");
+        btnImprimir = new JButton("Imprimir");
+        btnImprimir.setBounds(149, 85, 89, 23);
+        add(btnImprimir);
     }
 }

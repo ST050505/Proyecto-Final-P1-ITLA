@@ -1,6 +1,7 @@
 package funcionamiento;
 
 public class Cliente implements ManejadorDeClientes {
+	
 	private int idCliente;
 	private String nombre;
 	private String telefono;

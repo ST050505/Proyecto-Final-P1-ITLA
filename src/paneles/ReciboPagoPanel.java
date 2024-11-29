@@ -2,26 +2,29 @@ package paneles;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 
-public class ReciboPago extends JPanel {
+public class ReciboPagoPanel extends JPanel {
+	
 	private DefaultTableModel model;
 	private JTable recibos;
+	private JLabel lblProductos;
+	private JButton btnNuevo, btnImprimir;
+	private JScrollPane scrollPane;
 	
-    public ReciboPago() {
+    public ReciboPagoPanel() {
     	
         this.setBackground(Color.WHITE);
         setLayout(null);
         
-        JLabel lblNewLabel = new JLabel("Productos");
-        lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblNewLabel.setBounds(50, 119, 600, 34);
-        add(lblNewLabel);
+        lblProductos = new JLabel("Productos");
+        lblProductos.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblProductos.setBounds(50, 119, 600, 34);
+        add(lblProductos);
         
-        JButton btnNewButton = new JButton("Nuevo");
-        btnNewButton.setBounds(50, 85, 89, 23);
-        this.add(btnNewButton);
+        btnNuevo = new JButton("Nuevo");
+        btnNuevo.setBounds(50, 85, 89, 23);
+        this.add(btnNuevo);
        
         model = new DefaultTableModel();
         model.addColumn("Código");
@@ -34,12 +37,12 @@ public class ReciboPago extends JPanel {
         
         recibos = new JTable(model);
         recibos.setForeground(Color.WHITE);
-        JScrollPane scrollPane = new JScrollPane(recibos);
+        scrollPane = new JScrollPane(recibos);
         scrollPane.setBounds(50, 150, 600, 300);  
         this.add(scrollPane);
         
-        JButton btnNewButton_1 = new JButton("Imprimir");
-        btnNewButton_1.setBounds(149, 85, 89, 23);
-        add(btnNewButton_1);
+        btnImprimir = new JButton("Imprimir");
+        btnImprimir.setBounds(149, 85, 89, 23);
+        add(btnImprimir);
     }
 }

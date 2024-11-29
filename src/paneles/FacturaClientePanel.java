@@ -2,32 +2,34 @@ package paneles;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 
 public class FacturaClientePanel extends JPanel {
+	
 	private DefaultTableModel model;
 	private JTable facturas;
+	private JButton btnNuevo, btnConsultar, btnImprimir, btnFacCot;
+	private JScrollPane scrollPane;
 	
     public FacturaClientePanel() {
         this.setBackground(Color.WHITE);
         setLayout(null);
         
-        JButton btnNewButton = new JButton("Nuevo ");
-        btnNewButton.setBounds(50, 59, 104, 37);
-        add(btnNewButton);
+        btnNuevo = new JButton("Nuevo");
+        btnNuevo.setBounds(50, 59, 104, 37);
+        add(btnNuevo);
         
-        JButton btnNewButton_1 = new JButton("Consultar");
-        btnNewButton_1.setBounds(169, 59, 104, 37);
-        add(btnNewButton_1);
+        btnConsultar = new JButton("Consultar");
+        btnConsultar.setBounds(169, 59, 104, 37);
+        add(btnConsultar);
         
-        JButton btnNewButton_2 = new JButton("Imprimir");
-        btnNewButton_2.setBounds(287, 59, 104, 37);
-        add(btnNewButton_2);
+        btnImprimir = new JButton("Imprimir");
+        btnImprimir.setBounds(287, 59, 104, 37);
+        add(btnImprimir);
         
-        JButton btnNewButton_3 = new JButton("Facturar Cotización");
-        btnNewButton_3.setBounds(413, 59, 158, 37);
-        add(btnNewButton_3);
+        btnFacCot = new JButton("Facturar Cotización");
+        btnFacCot.setBounds(413, 59, 158, 37);
+        add(btnFacCot);
         
         facturas = new JTable();
         facturas.setBounds(74, 248, 1, 1);
@@ -44,9 +46,8 @@ public class FacturaClientePanel extends JPanel {
         
         facturas = new JTable(model);
         facturas.setForeground(Color.WHITE);
-        JScrollPane scrollPane = new JScrollPane(facturas);
+        scrollPane = new JScrollPane(facturas);
         scrollPane.setBounds(50, 150, 600, 300);  
         this.add(scrollPane);
-       
     }
 }

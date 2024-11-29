@@ -2,24 +2,26 @@ package paneles;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 
 public class ClientePanel extends JPanel {
+	
 	private DefaultTableModel model;
 	private JTable clientes;
+	private JButton btnNuevo, btnImprimir;
+	private JScrollPane scrollPane;
 	
     public ClientePanel() {
         this.setBackground(Color.WHITE);
         setLayout(null);
         
-        JButton btnNewButton = new JButton("Nuevo ");
-        btnNewButton.setBounds(50, 59, 104, 37);
-        add(btnNewButton);
+        btnNuevo = new JButton("Nuevo");
+        btnNuevo.setBounds(50, 59, 104, 37);
+        add(btnNuevo);
         
-        JButton btnNewButton_1 = new JButton("Imprimir");
-        btnNewButton_1.setBounds(169, 59, 104, 37);
-        add(btnNewButton_1);
+        btnImprimir = new JButton("Imprimir");
+        btnImprimir.setBounds(169, 59, 104, 37);
+        add(btnImprimir);
 
         clientes = new JTable();
         clientes.setBounds(74, 248, 1, 1);
@@ -34,9 +36,8 @@ public class ClientePanel extends JPanel {
       
         clientes = new JTable(model);
         clientes.setForeground(Color.WHITE);
-        JScrollPane scrollPane = new JScrollPane(clientes);
+        scrollPane = new JScrollPane(clientes);
         scrollPane.setBounds(50, 150, 600, 300);  
         this.add(scrollPane);
-       
     }
 }

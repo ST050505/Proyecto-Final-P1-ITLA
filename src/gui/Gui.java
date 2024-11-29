@@ -1,7 +1,5 @@
 package gui;
 
-// amamos a Hello Kitty <3
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,22 +19,22 @@ public class Gui {
     private InventarioPanel inventarioPanel;
     private FacturaClientePanel facturaClientePanel;
     private ClientePanel clientePanel;
-    private ReciboPago reciboPago;
-    // private Connection conexion; // Añadir la conexión
+    private ReciboPagoPanel reciboPagoPanel;
+    private Connection conexion; // Añadir la conexión
 
     public Gui() {
-       /*conexion = ConexionDB.getConexion(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
+    	conexion = ConexionDB.getConexion(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
         initialize();
         
-        /*frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                ConexionDB.cerrarConexion();  // Cierra la conexión a la base de datos
-                JOptionPane.showMessageDialog(frame, "La conexión se ha cerrado correctamente.", 
-                        "Cierre de Conexión", JOptionPane.INFORMATION_MESSAGE);  // Mostrar mensaje de cierre
-                System.exit(0);  // Finaliza la aplicación
-            }
-        });*/
+        frame.addWindowListener(new WindowAdapter() {
+        	@Override
+        	public void windowClosing(WindowEvent e) {
+        		ConexionDB.cerrarConexion();  // Cierra la conexión a la base de datos
+        		JOptionPane.showMessageDialog(frame, "La conexión se ha cerrado correctamente.", 
+        				"Cierre de Conexión", JOptionPane.INFORMATION_MESSAGE);  // Mostrar mensaje de cierre
+        		System.exit(0);  // Finaliza la aplicación
+        	}
+        });
     }
 
     private void initialize() {
@@ -110,7 +108,7 @@ public class Gui {
         inventarioPanel = new InventarioPanel();
         facturaClientePanel = new FacturaClientePanel();
         clientePanel = new ClientePanel();
-        reciboPago = new ReciboPago();
+        reciboPagoPanel = new ReciboPagoPanel();
         
 
         panel.setLayout(new CardLayout(0, 0));
@@ -118,7 +116,7 @@ public class Gui {
         panel.add(inventarioPanel, "Inventario");
         panel.add(facturaClientePanel, "Factura a cliente");
         panel.add(clientePanel, "Cliente panel");
-        panel.add(reciboPago, "Recibo de pago");
+        panel.add(reciboPagoPanel, "Recibo de pago");
 
         opcion1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
