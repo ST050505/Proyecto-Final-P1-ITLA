@@ -11,7 +11,7 @@ public class FacturaClientePanel extends JPanel {
 	private JButton btnNuevo, btnConsultar, btnImprimir, btnFacCot;
 	private JScrollPane scrollPane;
 	
-    public FacturaClientePanel() {
+    public FacturaClientePanel(JPanel Mainpanel) {
         this.setBackground(Color.WHITE);
         setLayout(null);
         

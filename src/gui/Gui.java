@@ -20,13 +20,14 @@ public class Gui {
     private FacturaClientePanel facturaClientePanel;
     private ClientePanel clientePanel;
     private ReciboPagoPanel reciboPagoPanel;
-    private Connection conexion; // Añadir la conexión
+
+    //private Connection conexion; // Añadir la conexión
 
     public Gui() {
-    	conexion = ConexionDB.getConexion(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
+    	/*conexion = ConexionDB.getConexion(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
         initialize();
         
-        frame.addWindowListener(new WindowAdapter() {
+       /* frame.addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
         		ConexionDB.cerrarConexion();  // Cierra la conexión a la base de datos
@@ -34,7 +35,7 @@ public class Gui {
         				"Cierre de Conexión", JOptionPane.INFORMATION_MESSAGE);  // Mostrar mensaje de cierre
         		System.exit(0);  // Finaliza la aplicación
         	}
-        });
+        });*/
     }
 
     private void initialize() {
@@ -101,52 +102,56 @@ public class Gui {
         dropdownPanel.add(opcion3);
         dropdownPanel.add(opcion4);
         
-        JPanel panel = new JPanel();
-        panel.setBounds(260, 11, 717, 541);
-        frame.getContentPane().add(panel);
+        CardLayout cardLayout = new CardLayout();
+        JPanel Mainpanel = new JPanel(cardLayout); // Configura mainPanel con CardLayout
+
         
-        inventarioPanel = new InventarioPanel();
-        facturaClientePanel = new FacturaClientePanel();
-        clientePanel = new ClientePanel();
-        reciboPagoPanel = new ReciboPagoPanel();
+       
+        Mainpanel.setBounds(260, 11, 717, 541);
+        frame.getContentPane().add(Mainpanel);
+        
+        inventarioPanel = new InventarioPanel(Mainpanel);
+        facturaClientePanel = new FacturaClientePanel(Mainpanel);
+        clientePanel = new ClientePanel(Mainpanel);
+        reciboPagoPanel = new ReciboPagoPanel(Mainpanel);
         
 
-        panel.setLayout(new CardLayout(0, 0));
+        Mainpanel.setLayout(new CardLayout(0, 0));
         
-        panel.add(inventarioPanel, "Inventario");
-        panel.add(facturaClientePanel, "Factura a cliente");
-        panel.add(clientePanel, "Cliente panel");
-        panel.add(reciboPagoPanel, "Recibo de pago");
+        Mainpanel.add(inventarioPanel, "Inventario");
+        Mainpanel.add(facturaClientePanel, "Factura a cliente");
+        Mainpanel.add(clientePanel, "Cliente panel");
+        Mainpanel.add(reciboPagoPanel, "Recibo de pago");
 
         opcion1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Cambiar el panel cuando se haga clic
-                CardLayout cl = (CardLayout) (panel.getLayout());
-                cl.show(panel, "Inventario");
+                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
+                cl.show(Mainpanel, "Inventario");
             }
         });
         
         opcion2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Cambiar el panel cuando se haga clic
-                CardLayout cl = (CardLayout) (panel.getLayout());
-                cl.show(panel, "Factura a cliente");
+                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
+                cl.show(Mainpanel, "Factura a cliente");
             }
         });
         
         opcion3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Cambiar el panel cuando se haga clic
-                CardLayout cl = (CardLayout) (panel.getLayout());
-                cl.show(panel, "Cliente panel");
+                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
+                cl.show(Mainpanel, "Cliente panel");
             }
         });
         
         opcion4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Cambiar el panel cuando se haga clic
-                CardLayout cl = (CardLayout) (panel.getLayout());
-                cl.show(panel, "Recibo de pago");
+                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
+                cl.show(Mainpanel, "Recibo de pago");
             }
         });
 
