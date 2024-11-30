@@ -266,10 +266,8 @@ public class InventarioPanel extends JPanel {
 
 
 }
-
     // Método para generar un ID único
     private int generarNuevoID() {
         return producto.size() + 1;
     }
 }
-
