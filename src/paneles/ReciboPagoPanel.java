@@ -23,7 +23,7 @@ public class ReciboPagoPanel extends JPanel {
         add(lblProductos);
         
         btnNuevo = new JButton("Nuevo");
-        btnNuevo.setBounds(50, 85, 89, 23);
+        btnNuevo.setBounds(50, 74, 89, 34);
         this.add(btnNuevo);
        
         model = new DefaultTableModel();
@@ -42,7 +42,7 @@ public class ReciboPagoPanel extends JPanel {
         this.add(scrollPane);
         
         btnImprimir = new JButton("Imprimir");
-        btnImprimir.setBounds(149, 85, 89, 23);
+        btnImprimir.setBounds(149, 74, 89, 34);
         add(btnImprimir);
     }
 }
