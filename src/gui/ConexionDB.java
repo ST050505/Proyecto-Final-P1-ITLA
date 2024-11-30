@@ -1,4 +1,4 @@
-/*package gui;
+package gui;
 	
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -40,4 +40,4 @@ public class ConexionDB {
 			System.out.println("Error al cerrar la conexión: " + e.getMessage());
 		}
 	}
-}*/
+}

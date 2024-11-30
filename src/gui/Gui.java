@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
-
 import paneles.*;
 
 public class Gui {
@@ -21,21 +20,22 @@ public class Gui {
     private ClientePanel clientePanel;
     private ReciboPagoPanel reciboPagoPanel;
 
-    //private Connection conexion; // Añadir la conexión
+    private Connection conexion; // Añadir la conexión
 
     public Gui() {
-    	/*conexion = ConexionDB.getConexion(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
+    	conexion = ConexionDB.getConexion(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
         initialize();
         
-       /* frame.addWindowListener(new WindowAdapter() {
+       frame.addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
         		ConexionDB.cerrarConexion();  // Cierra la conexión a la base de datos
+        		System.out.println("Se ha cerrado la conexión.");
         		JOptionPane.showMessageDialog(frame, "La conexión se ha cerrado correctamente.", 
         				"Cierre de Conexión", JOptionPane.INFORMATION_MESSAGE);  // Mostrar mensaje de cierre
         		System.exit(0);  // Finaliza la aplicación
         	}
-        });*/
+        });
     }
 
     private void initialize() {
@@ -61,7 +61,7 @@ public class Gui {
         
         dropdownPanel = new JPanel();
         dropdownPanel.setBackground(new Color(45, 48, 54));
-        dropdownPanel.setBounds(30, 69, 180, 323);
+        dropdownPanel.setBounds(30, 69, 180, 205);
         dropdownPanel.setVisible(false);
         sidebar.add(dropdownPanel);
         dropdownPanel.setLayout(null);
@@ -69,22 +69,25 @@ public class Gui {
         JLabel opcion1 = new JLabel("Inventario");
         opcion1.setBounds(0, 0, 180, 64);
         opcion1.setForeground(Color.WHITE);
-        opcion1.setFont(new Font("Arial", Font.PLAIN, 14));
+        opcion1.setFont(new Font("Verdana", Font.BOLD, 14));
         dropdownPanel.add(opcion1);
         
         JLabel opcion2 = new JLabel("Factura a cliente");
+        opcion2.setHorizontalAlignment(SwingConstants.CENTER);
         opcion2.setBounds(0, 54, 180, 45);
         opcion2.setForeground(Color.WHITE);
         opcion2.setFont(new Font("Arial", Font.PLAIN, 14));
         dropdownPanel.add(opcion2);
         
         JLabel opcion3 = new JLabel("Cliente");
+        opcion3.setHorizontalAlignment(SwingConstants.CENTER);
         opcion3.setBounds(0, 110, 180, 28);
         opcion3.setForeground(new Color(255, 255, 255));
         opcion3.setFont(new Font("Arial", Font.PLAIN, 14));
         dropdownPanel.add(opcion3);
         
         JLabel opcion4 = new JLabel("Recibo de pago");
+        opcion4.setHorizontalAlignment(SwingConstants.CENTER);
         opcion4.setBounds(0, 149, 180, 45);
         opcion4.setFont(new Font("Arial", Font.PLAIN, 14));
         opcion4.setForeground(Color.WHITE);
@@ -187,7 +190,7 @@ public class Gui {
     private void createDropdownOption(JLabel label) {
         label.setForeground(Color.WHITE);
         label.setFont(new Font("Arial", Font.PLAIN, 14));
-        label.setHorizontalAlignment(SwingConstants.LEFT);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setOpaque(false); // Sin fondo
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
