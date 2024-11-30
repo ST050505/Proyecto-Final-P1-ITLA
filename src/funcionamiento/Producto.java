@@ -100,14 +100,37 @@ public class Producto implements ManejadorDeInventario {
 
 
 	@Override
-	public void actualizarProducto(Producto producto) {
-		
+	public void editarProducto(Producto producto) {
+	    for (Producto p : inventario) {
+	        if (p.idProducto == producto.idProducto) {
+	            p.setNombre(producto.getNombre());
+	            p.setMarca(producto.getMarca());
+	            p.setPrecio(producto.getPrecio());
+	            p.setCantidadDeInventario(producto.getCantidadDeInventario());
+	            System.out.println("Producto editado: " + producto.getNombre());
+	            return;
+	        }
+	    }
+	    System.out.println("Producto no encontrado para editar.");
 	}
 
 	@Override
 	public void eliminarProducto(int idProducto) {
-		
+	    Producto productoAEliminar = null;
+	    for (Producto p : inventario) {
+	        if (p.idProducto == idProducto) {
+	            productoAEliminar = p;
+	            break;
+	        }
+	    }
+	    if (productoAEliminar != null) {
+	        inventario.remove(productoAEliminar);
+	        System.out.println("Producto eliminado: " + productoAEliminar.getNombre());
+	    } else {
+	        System.out.println("Producto no encontrado para eliminar.");
+	    }
 	}
+
 
 	@Override
 	public Producto consultarProducto(int idProducto) {
