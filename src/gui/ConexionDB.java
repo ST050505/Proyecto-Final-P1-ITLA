@@ -8,7 +8,7 @@ public class ConexionDB {
 	
 	private static final String URL = "jdbc:mysql://localhost:3306/proyecto_final"; // Cambia el nombre de la base de datos
 	private static final String USER = "root"; // Tu usuario
-	private static final String PASSWORD = "admin050505"; // Tu contraseña
+	private static final String PASSWORD = "12345"; // Tu contraseña
 	
 	private static Connection conexion = null;
 	

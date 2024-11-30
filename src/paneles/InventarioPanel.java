@@ -7,266 +7,221 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class InventarioPanel extends JPanel {
-
     private DefaultTableModel model;
-    private JLabel lblProductos;
-    private JButton btnNuevo, btnImprimir, btnEditar, btnEliminar, btnCerrar,
-    btnGuardar, btnGuardarEditar, btnGuardarCerrar;
-    private JPanel panelNuevo;
-    private JTextField textField, textField_1, textField_2, textField_3;
-    private JTable table;
+    private JTable productos;
+    private JButton btnNuevo, btnImprimir, btnGuardar, btnCerrar, btnEditar, btnEliminar;
+    private JPanel AgregarProductoPanel;
+    private JTextField textFieldNombre, textFieldMarca, textFieldPrecio, textFieldCantidad;
+    private JLabel lblNombre, lblMarca, lblPrecio, lblCantidad;
     private JScrollPane scrollPane;
     static ArrayList<Producto> producto = new ArrayList<>();
-    private JPanel editarPanel;
 
-    @SuppressWarnings("serial")
-	public InventarioPanel(JPanel Mainpanel) {
+    public InventarioPanel(JPanel Mainpanel) {
         this.setBackground(Color.WHITE);
-        setLayout(null);  
+        setLayout(null);
 
+        // Inicialización de componentes
+        initComponents();
+
+        // Configuración de ActionListeners
+        configureActionListeners();
+    }
+
+    private void initComponents() {
+        // Botones
         btnNuevo = new JButton("Nuevo");
-        btnNuevo.setBounds(50, 74, 89, 34);
+        btnNuevo.setBounds(50, 59, 104, 37);
         add(btnNuevo);
 
         btnImprimir = new JButton("Imprimir");
-        btnImprimir.setBounds(347, 74, 89, 34);
+        btnImprimir.setBounds(396, 59, 104, 37);
         add(btnImprimir);
 
         btnEditar = new JButton("Editar");
-        btnEditar.setBounds(149, 74, 89, 34);
+        btnEditar.setBounds(168, 59, 104, 37);
         add(btnEditar);
 
         btnEliminar = new JButton("Eliminar");
-        btnEliminar.setBounds(248, 74, 89, 34);
+        btnEliminar.setBounds(282, 59, 104, 37);
         add(btnEliminar);
-        
-        // Inicializamos la tabla y el modelo correctamente
-        model = new DefaultTableModel(new Object[]{"Nombre", "Precio", "Marca", "Cantidad"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // No permitir edición directa en la tabla
-            }
-        };
 
-        table = new JTable(model);
-        scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(50, 161, 600, 289);  // Establecemos las dimensiones de la tabla
-        add(scrollPane);
+        // Tabla y modelo
+        model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Nombre");
+        model.addColumn("Marca");
+        model.addColumn("Precio");
+        model.addColumn("Cantidad");
 
-        // Inicializamos el panelNuevo (formulario)
-        panelNuevo = new JPanel();
-        panelNuevo.setBounds(50, 164, 600, 300);
-        panelNuevo.setBackground(Color.WHITE);
-        panelNuevo.setLayout(null);
+        productos = new JTable(model);
 
-        // Botón de Cerrar dentro de panelNuevo
+        scrollPane = new JScrollPane(productos);
+        scrollPane.setBounds(50, 161, 600, 289);
+        this.add(scrollPane);
+
+        // Panel para agregar productos
+        AgregarProductoPanel = new JPanel();
+        AgregarProductoPanel.setBounds(50, 164, 600, 300);
+        AgregarProductoPanel.setBackground(Color.WHITE);
+        AgregarProductoPanel.setLayout(null);
+
+        textFieldNombre = new JTextField();
+        textFieldNombre.setBounds(84, 47, 145, 30);
+        AgregarProductoPanel.add(textFieldNombre);
+
+        textFieldMarca = new JTextField();
+        textFieldMarca.setBounds(84, 124, 145, 30);
+        AgregarProductoPanel.add(textFieldMarca);
+
+        textFieldPrecio = new JTextField();
+        textFieldPrecio.setBounds(327, 47, 130, 30);
+        AgregarProductoPanel.add(textFieldPrecio);
+
+        textFieldCantidad = new JTextField();
+        textFieldCantidad.setBounds(327, 124, 130, 30);
+        AgregarProductoPanel.add(textFieldCantidad);
+
+        lblNombre = new JLabel("Nombre");
+        lblNombre.setBounds(84, 22, 112, 14);
+        AgregarProductoPanel.add(lblNombre);
+
+        lblMarca = new JLabel("Marca");
+        lblMarca.setBounds(84, 99, 96, 14);
+        AgregarProductoPanel.add(lblMarca);
+
+        lblPrecio = new JLabel("Precio");
+        lblPrecio.setBounds(327, 22, 112, 14);
+        AgregarProductoPanel.add(lblPrecio);
+
+        lblCantidad = new JLabel("Cantidad");
+        lblCantidad.setBounds(327, 99, 94, 14);
+        AgregarProductoPanel.add(lblCantidad);
+
         btnCerrar = new JButton("Cerrar");
-        btnCerrar.setBounds(279, 277, 321, 23);
-        panelNuevo.add(btnCerrar);
+        btnCerrar.setBounds(284, 270, 301, 30);
+        AgregarProductoPanel.add(btnCerrar);
 
-        // Botón de Guardar dentro de panelNuevo
         btnGuardar = new JButton("Guardar");
-        btnGuardar.setBounds(0, 277, 302, 23);
-        panelNuevo.add(btnGuardar);
+        btnGuardar.setBounds(0, 270, 263, 30);
+        AgregarProductoPanel.add(btnGuardar);
+    }
 
-        // Campos del formulario
-        JLabel lblNewLabel = new JLabel("Nombre");
-        lblNewLabel.setBounds(20, 27, 49, 14);
-        panelNuevo.add(lblNewLabel);
+    private void configureActionListeners() {
+        btnNuevo.addActionListener(e -> showAddProductPanel());
+        btnCerrar.addActionListener(e -> showProductTable());
+        btnGuardar.addActionListener(e -> saveProduct());
+        btnEditar.addActionListener(e -> editProduct());
+        btnEliminar.addActionListener(e -> deleteProduct());
+    }
 
-        JLabel lblNewLabel_1 = new JLabel("Marca ");
-        lblNewLabel_1.setBounds(20, 114, 49, 14);
-        panelNuevo.add(lblNewLabel_1);
+    private void showAddProductPanel() {
+        add(AgregarProductoPanel);
+        remove(scrollPane);
+        revalidate();
+        repaint();
+    }
 
-        JLabel lblNewLabel_2 = new JLabel("Precio ");
-        lblNewLabel_2.setBounds(211, 27, 49, 14);
-        panelNuevo.add(lblNewLabel_2);
+    private void showProductTable() {
+        remove(AgregarProductoPanel);
+        add(scrollPane);
+        revalidate();
+        repaint();
+    }
 
-        JLabel lblNewLabel_3 = new JLabel("Cantidad");
-        lblNewLabel_3.setBounds(211, 114, 72, 14);
-        panelNuevo.add(lblNewLabel_3);
+    private void saveProduct() {
+        try {
+            String nombre = textFieldNombre.getText();
+            String marca = textFieldMarca.getText();
+            double precio = Double.parseDouble(textFieldPrecio.getText());
+            int cantidad = Integer.parseInt(textFieldCantidad.getText());
 
-        textField = new JTextField();
-        textField.setBounds(20, 52, 137, 32);
-        panelNuevo.add(textField);
+            Producto nuevoProducto = new Producto(generarNuevoID(), nombre, marca, precio, cantidad);
+            producto.add(nuevoProducto);
 
-        textField_1 = new JTextField();
-        textField_1.setBounds(20, 139, 137, 32);
-        panelNuevo.add(textField_1);
+            model.addRow(new Object[]{nuevoProducto.getIdProducto(), nuevoProducto.getNombre(), 
+                                       nuevoProducto.getMarca(), nuevoProducto.getPrecio(), 
+                                       nuevoProducto.getCantidad()});
 
-        textField_2 = new JTextField();
-        textField_2.setBounds(211, 52, 122, 32);
-        panelNuevo.add(textField_2);
+            textFieldNombre.setText("");
+            textFieldMarca.setText("");
+            textFieldPrecio.setText("");
+            textFieldCantidad.setText("");
 
-        textField_3 = new JTextField();
-        textField_3.setColumns(10);
-        textField_3.setBounds(211, 139, 122, 32);
-        panelNuevo.add(textField_3);
+            JOptionPane.showMessageDialog(this, "Producto agregado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa valores válidos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-        // Acción al presionar "Nuevo"
-        btnNuevo.addActionListener(e -> {
-        	remove(scrollPane); // Ocultar la tabla
-            add(panelNuevo); // Mostrar el panel de formulario
-            revalidate();
-            repaint();
-        });
-
-        // Acción al presionar "Cerrar"
-        btnCerrar.addActionListener(e -> {
-            remove(panelNuevo); // Eliminar el formulario
-            add(scrollPane);      // Volver a mostrar la tabla
-            revalidate();
-            repaint();
-        });
-
-        // Acción al presionar "Guardar"
-        btnGuardar.addActionListener(e -> {
+    private void editProduct() {
+        int selectedRow = productos.getSelectedRow();
+        if (selectedRow != -1) {
             try {
-                // Obtener los valores de los campos de texto
-                String nombre = textField.getText();
-                String marca = textField_1.getText();
-                double precio = Double.parseDouble(textField_2.getText()); // Convertir el precio a double
-                int cantidad = Integer.parseInt(textField_3.getText()); // Convertir la cantidad a int
+                int id = (int) model.getValueAt(selectedRow, 0);
+                String nombre = (String) model.getValueAt(selectedRow, 1);
+                String marca = (String) model.getValueAt(selectedRow, 2);
+                double precio = (double) model.getValueAt(selectedRow, 3);
+                int cantidad = (int) model.getValueAt(selectedRow, 4);
 
-                // Crear un objeto Producto con un ID único
-                Producto nuevoProducto = new Producto(generarNuevoID(), nombre, marca, precio, cantidad);
+                JTextField nombreField = new JTextField(nombre);
+                JTextField marcaField = new JTextField(marca);
+                JTextField precioField = new JTextField(String.valueOf(precio));
+                JTextField cantidadField = new JTextField(String.valueOf(cantidad));
 
-                // Agregar el producto al ArrayList
-                producto.add(nuevoProducto);
+                JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
+                panel.add(new JLabel("Nombre:"));
+                panel.add(nombreField);
+                panel.add(new JLabel("Marca:"));
+                panel.add(marcaField);
+                panel.add(new JLabel("Precio:"));
+                panel.add(precioField);
+                panel.add(new JLabel("Cantidad:"));
+                panel.add(cantidadField);
 
-                // Agregar el producto a la tabla
-                model.addRow(new Object[]{nuevoProducto.getNombre(), nuevoProducto.getPrecio(), 
-                		nuevoProducto.getMarca(), nuevoProducto.getCantidad()});
+                int option = JOptionPane.showConfirmDialog(this, panel, "Editar Producto", JOptionPane.OK_CANCEL_OPTION);
 
-                // Limpiar los campos después de agregar el producto
-                textField.setText("");
-                textField_1.setText("");
-                textField_2.setText("");
-                textField_3.setText("");
-
-                // Volver a mostrar la tabla
-                scrollPane.setVisible(true);
-
-                JOptionPane.showMessageDialog(this, "Producto agregado exitosamente.", "Éxito", 
-                		JOptionPane.INFORMATION_MESSAGE);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Por favor, ingresa valores válidos.", "Error", 
-                		JOptionPane.ERROR_MESSAGE);
-            }
-        });
-        
-        btnEliminar.addActionListener(e -> { // Botón "Eliminar"
-            int selectedRow = table.getSelectedRow(); // Obtener la fila seleccionada
-
-            if (selectedRow >= 0) { // Verificar que haya una fila seleccionada
-                int confirm = JOptionPane.showConfirmDialog(
-                        this,
-                        "¿Estás seguro de que deseas eliminar este producto?",
-                        "Confirmar eliminación",
-                        JOptionPane.YES_NO_OPTION
-                );
-
-                if (confirm == JOptionPane.YES_OPTION) {
-                    // Eliminar el producto del ArrayList
-                    producto.remove(selectedRow);
-
-                    // Eliminar la fila de la tabla
-                    model.removeRow(selectedRow);
-
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Producto eliminado correctamente.",
-                            "Eliminación exitosa",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-                }
-            } else {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Por favor, selecciona un producto para eliminar.",
-                        "Error",
-                        JOptionPane.WARNING_MESSAGE
-                );
-            }
-        });
-        
-        
-        btnEditar.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow(); // Obtener la fila seleccionada
-
-            if (selectedRow >= 0) { // Verificar si hay una fila seleccionada
-                try {
-                    // Obtener el producto seleccionado
-                    Producto productoSeleccionado = producto.get(selectedRow);
-
-                    // Crear campos de texto para editar los valores del producto
-                    JTextField nombreField = new JTextField(productoSeleccionado.getNombre());
-                    JTextField marcaField = new JTextField(productoSeleccionado.getMarca());
-                    JTextField precioField = new JTextField(String.valueOf(productoSeleccionado.getPrecio()));
-                    JTextField cantidadField = new JTextField(String.valueOf(productoSeleccionado.getCantidad()));
-
-                    // Configurar el formulario de edición en un panel
-                    JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
-                    panel.add(new JLabel("Nombre:"));
-                    panel.add(nombreField);
-                    panel.add(new JLabel("Marca:"));
-                    panel.add(marcaField);
-                    panel.add(new JLabel("Precio:"));
-                    panel.add(precioField);
-                    panel.add(new JLabel("Cantidad:"));
-                    panel.add(cantidadField);
-
-                    // Configurar el JOptionPane en un JDialog con tamaño personalizado
-                    JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-                    JDialog dialog = optionPane.createDialog("Editar Producto");
-
-                    dialog.setSize(600, 300); // Establecer el tamaño del diálogo
-                    dialog.setVisible(true);  // Mostrar el diálogo
-
-                    if (optionPane.getValue() != null && optionPane.getValue().equals(JOptionPane.OK_OPTION)) {
-                        // Validar y actualizar el producto
-                        String nuevoNombre = nombreField.getText();
-                        String nuevaMarca = marcaField.getText();
-                        double nuevoPrecio = Double.parseDouble(precioField.getText());
-                        int nuevaCantidad = Integer.parseInt(cantidadField.getText());
-
-                        // Actualizar el objeto Producto
-                        productoSeleccionado.setNombre(nuevoNombre);
-                        productoSeleccionado.setMarca(nuevaMarca);
-                        productoSeleccionado.setPrecio(nuevoPrecio);
-                        productoSeleccionado.setCantidad(nuevaCantidad);
-
-                        // Actualizar la tabla
-                        model.setValueAt(nuevoNombre, selectedRow, 0);
-                        model.setValueAt(nuevaMarca, selectedRow, 1);
-                        model.setValueAt(nuevoPrecio, selectedRow, 2);
-                        model.setValueAt(nuevaCantidad, selectedRow, 3);
-
-                        JOptionPane.showMessageDialog(this, "Producto actualizado exitosamente.");
+                if (option == JOptionPane.OK_OPTION) {
+                    if (nombreField.getText().isEmpty() || marcaField.getText().isEmpty() ||
+                            precioField.getText().isEmpty() || cantidadField.getText().isEmpty()) {
+                        throw new IllegalArgumentException("Todos los campos deben ser completados.");
                     }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(
-                        this,
-                        "Por favor, ingresa valores válidos para el precio y la cantidad.",
-                        "Error de Formato",
-                        JOptionPane.ERROR_MESSAGE
-                    );
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(
-                        this,
-                        "Ocurrió un error al editar el producto: " + ex.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                    );
+
+                    model.setValueAt(nombreField.getText(), selectedRow, 1);
+                    model.setValueAt(marcaField.getText(), selectedRow, 2);
+                    model.setValueAt(Double.parseDouble(precioField.getText()), selectedRow, 3);
+                    model.setValueAt(Integer.parseInt(cantidadField.getText()), selectedRow, 4);
+
+                    JOptionPane.showMessageDialog(this, "Producto actualizado exitosamente.");
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Por favor, selecciona un producto para editar.");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        });
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona un producto para editar.");
+        }
+    }
 
+    private void deleteProduct() {
+        int selectedRow = productos.getSelectedRow();
+        if (selectedRow >= 0) {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Estás seguro de que deseas eliminar este producto?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION
+            );
 
-}
-    // Método para generar un ID único
+            if (confirm == JOptionPane.YES_OPTION) {
+                producto.remove(selectedRow);
+                model.removeRow(selectedRow);
+
+                JOptionPane.showMessageDialog(this, "Producto eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona un producto para eliminar.", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
     private int generarNuevoID() {
         return producto.size() + 1;
     }
