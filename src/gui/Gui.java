@@ -23,13 +23,13 @@ public class Gui {
     private Connection conexion; // Añadir la conexión
 
     public Gui() {
-    	conexion = ConexionDB.getConexion(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
+    	conexion = ConexionDB.getConnection(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
         initialize();
         
        frame.addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
-        		ConexionDB.cerrarConexion();  // Cierra la conexión a la base de datos
+        		ConexionDB.closeConnection(conexion);  // Cierra la conexión a la base de datos
         		System.out.println("Se ha cerrado la conexión.");
         		JOptionPane.showMessageDialog(frame, "La conexión se ha cerrado correctamente.", 
         				"Cierre de Conexión", JOptionPane.INFORMATION_MESSAGE);  // Mostrar mensaje de cierre
@@ -106,9 +106,7 @@ public class Gui {
         dropdownPanel.add(opcion4);
         
         CardLayout cardLayout = new CardLayout();
-        JPanel Mainpanel = new JPanel(cardLayout); // Configura mainPanel con CardLayout
-
-        
+        JPanel Mainpanel = new JPanel(cardLayout);
        
         Mainpanel.setBounds(260, 11, 717, 541);
         frame.getContentPane().add(Mainpanel);

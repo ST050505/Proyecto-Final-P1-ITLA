@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import gui.ConexionDB;
 import gui.Gui;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -90,7 +89,7 @@ public class Login extends JFrame {
 
         String sql = "SELECT * FROM user WHERE user = ? AND password = ?";
 
-        try (Connection con = ConexionDB.getConexion();
+        try (Connection con = ConexionDB.getConnection();
              PreparedStatement pst = con.prepareStatement(sql)) {
 
             pst.setString(1, user);
@@ -102,7 +101,7 @@ public class Login extends JFrame {
 					Gui gui = new Gui();
 					dispose();
                 } else {
-                	ConexionDB.cerrarConexion();
+                	ConexionDB.closeConnection(con);
                     JOptionPane.showMessageDialog(null, 
                     		"Login denegado, credenciales invalidas",
                     		"Error en las credenciales",
