@@ -2,7 +2,7 @@ package login;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import gui.ConexionDB;
+import db.*;
 import gui.Gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;

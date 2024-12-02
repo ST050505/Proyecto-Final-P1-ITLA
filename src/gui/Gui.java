@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import paneles.*;
+import db.*;
 
 public class Gui {
 
@@ -18,29 +19,28 @@ public class Gui {
     private InventarioPanel inventarioPanel;
     private FacturaClientePanel facturaClientePanel;
     private ClientePanel clientePanel;
-    private ReciboPagoPanel reciboPagoPanel;
-
-    private Connection conexion; // Añadir la conexión
+    private Connection conexion;
 
     public Gui() {
-    	conexion = ConexionDB.getConnection(); // Obtener la conexión antes de inicializar la interfaz gráfica*/
+    	conexion = ConexionDB.getConnection();
         initialize();
-        
+
+        clientePanel.setOnClienteActualizado(() -> facturaClientePanel.recargarClientes());
+        inventarioPanel.setOnProductoActualizado(() -> facturaClientePanel.recargarProductos());
+
        frame.addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
         		ConexionDB.closeConnection(conexion);  // Cierra la conexión a la base de datos
         		System.out.println("Se ha cerrado la conexión.");
         		JOptionPane.showMessageDialog(frame, "La conexión se ha cerrado correctamente.", 
-        				"Cierre de Conexión", JOptionPane.INFORMATION_MESSAGE);  // Mostrar mensaje de cierre
-        		System.exit(0);  // Finaliza la aplicación
+        				"Cierre de Conexión", JOptionPane.INFORMATION_MESSAGE);
+        		System.exit(0);
         	}
         });
     }
 
     private void initialize() {
-    	
-        // Configuración de la ventana principal
     	
         frame = new JFrame("Tienda de celulares - Proyecto Final");
         frame.setBounds(100, 100, 1000, 600);
@@ -52,16 +52,16 @@ public class Gui {
         
         sidebar = new JPanel();
         sidebar.setBounds(0, 0, 250, 600);
-        sidebar.setBackground(new Color(54, 57, 63)); // Color oscuro
-        sidebar.setLayout(null); // Usamos layout null para controlar el posicionamiento manual
-        sidebar.setPreferredSize(new Dimension(250, frame.getHeight())); // Sidebar más ancho
+        sidebar.setBackground(new Color(54, 57, 63));
+        sidebar.setLayout(null);
+        sidebar.setPreferredSize(new Dimension(250, frame.getHeight()));
         frame.getContentPane().add(sidebar);
 
         // Panel para el menú desplegable
         
         dropdownPanel = new JPanel();
         dropdownPanel.setBackground(new Color(45, 48, 54));
-        dropdownPanel.setBounds(30, 69, 180, 205);
+        dropdownPanel.setBounds(30, 69, 180, 160);
         dropdownPanel.setVisible(false);
         sidebar.add(dropdownPanel);
         dropdownPanel.setLayout(null);
@@ -85,25 +85,16 @@ public class Gui {
         opcion3.setForeground(new Color(255, 255, 255));
         opcion3.setFont(new Font("Arial", Font.PLAIN, 14));
         dropdownPanel.add(opcion3);
-        
-        JLabel opcion4 = new JLabel("Recibo de pago");
-        opcion4.setHorizontalAlignment(SwingConstants.CENTER);
-        opcion4.setBounds(0, 149, 180, 45);
-        opcion4.setFont(new Font("Arial", Font.PLAIN, 14));
-        opcion4.setForeground(Color.WHITE);
-        dropdownPanel.add(opcion4);
 
         // Agregar cada una al dropwdownPanel
         
         createDropdownOption(opcion1);
         createDropdownOption(opcion2);
         createDropdownOption(opcion3);
-        createDropdownOption(opcion4);
         
         dropdownPanel.add(opcion1);
         dropdownPanel.add(opcion2);
         dropdownPanel.add(opcion3);
-        dropdownPanel.add(opcion4);
         
         CardLayout cardLayout = new CardLayout();
         JPanel Mainpanel = new JPanel(cardLayout);
@@ -114,56 +105,27 @@ public class Gui {
         inventarioPanel = new InventarioPanel(Mainpanel);
         facturaClientePanel = new FacturaClientePanel(Mainpanel);
         clientePanel = new ClientePanel(Mainpanel);
-        reciboPagoPanel = new ReciboPagoPanel(Mainpanel);
         
+        facturaClientePanel.setOnActualizarInventario(() -> inventarioPanel.recargarInventario());
+        inventarioPanel.setOnProductoActualizado(() -> {
+        	facturaClientePanel.cargarProductos(); });
 
         Mainpanel.setLayout(new CardLayout(0, 0));
         
         Mainpanel.add(inventarioPanel, "Inventario");
         Mainpanel.add(facturaClientePanel, "Factura a cliente");
         Mainpanel.add(clientePanel, "Cliente panel");
-        Mainpanel.add(reciboPagoPanel, "Recibo de pago");
+  
+        agregarCambioDePanel(opcion1, Mainpanel, "Inventario");
+        agregarCambioDePanel(opcion2, Mainpanel, "Factura a cliente");
+        agregarCambioDePanel(opcion3, Mainpanel, "Cliente panel");
 
-        opcion1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Cambiar el panel cuando se haga clic
-                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
-                cl.show(Mainpanel, "Inventario");
-            }
-        });
-        
-        opcion2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Cambiar el panel cuando se haga clic
-                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
-                cl.show(Mainpanel, "Factura a cliente");
-            }
-        });
-        
-        opcion3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Cambiar el panel cuando se haga clic
-                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
-                cl.show(Mainpanel, "Cliente panel");
-            }
-        });
-        
-        opcion4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Cambiar el panel cuando se haga clic
-                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
-                cl.show(Mainpanel, "Recibo de pago");
-            }
-        });
-
-        // Botón principal (Dashboard)
-        
         dashboardButton = new JButton("Dashboard");
         dashboardButton.setBounds(30, 39, 180, 30);
         sidebar.add(dashboardButton);
         dashboardButton.setBackground(new Color(45, 48, 54));
         dashboardButton.setForeground(Color.WHITE);
-        dashboardButton.setFocusPainted(false); // Eliminar el borde cuando se hace clic
+        dashboardButton.setFocusPainted(false);
         dashboardButton.setFont(new Font("Arial", Font.BOLD, 16));
         dashboardButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -183,6 +145,17 @@ public class Gui {
         frame.setVisible(true);
     }
 
+    // Método para hacer cambio de panel a través de un MouseListener
+    
+    private void agregarCambioDePanel(JLabel opcion, JPanel Mainpanel, String nombrePanel) {
+        opcion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CardLayout cl = (CardLayout) (Mainpanel.getLayout());
+                cl.show(Mainpanel, nombrePanel);
+            }
+        });
+    }
+    
     // Método para crear opciones estilizadas (sin fondo)
     
     private void createDropdownOption(JLabel label) {
