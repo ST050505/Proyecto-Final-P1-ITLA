@@ -2,12 +2,10 @@ package funcionamiento;
 
 public interface ManejadorDeInventario {
 	
-	void agregarproducto(Producto producto);
-	
-	void editarProducto(Producto producto);
-	
-	void eliminarProducto(int idProducto);
-	
-	Producto consultarProducto(int idProducto);
-
+	void saveProduct(Producto producto);
+	void editProduct(Producto producto);
+	void deleteProduct(Producto producto);
+	void limpiarCampos();
+	void loadEvents();
+	boolean validarCampos();
 }

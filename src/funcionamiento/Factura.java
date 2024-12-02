@@ -1,51 +1,30 @@
 package funcionamiento;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Factura extends Documento implements ManejadorDeFacturacion{
-	
-	private Cliente cliente;
-	static List<Producto> detallesFactura = new ArrayList<Producto>();
+public abstract class Factura extends Documento{
 
-	public Factura(int idDocumento, Date fechaEmision, double montoTotal, Cliente cliente) {
-		super(idDocumento, fechaEmision, montoTotal);
-		this.cliente = cliente;
-	}
-	
-	//Metodos de clase Factura
-	
-	public void calcularImpuesto() {}
-	
-	public void agregarProducto() {}
-	
-	//Metodos de herencia de clase abstracta Documento 
+    private Cliente cliente;
 
-	@Override
-	public String generarDocumento() {
-		return null;
-	}
+    public Factura(int idDocumento, Date fechaEmision, double montoTotal, Cliente cliente) {
+        super(idDocumento, fechaEmision, montoTotal);
+        this.setCliente(cliente);
+    }
+    
+    // Getters y Setters
+    
+    public Cliente getCliente() {return cliente;}
+	public void setCliente(Cliente cliente) {this.cliente = cliente;}
 
-	@Override
-	public double calcularMontoTotal() {
-		return 0;
-	}
-	
-	//Metodos de las interfaz ManejadorDrFacturacion 
+    //Metodos de herencia de clase abstracta Documento 
 
-	@Override
-	public Factura crearFactura(Cliente cliente, List<Producto> producto) {
-		return null;
-	}
+    @Override
+    public String generarDocumento() {
+        return null;
+    }
 
-	@Override
-	public List<Factura> listarFacturas() {
-		return null;
-	}
-
-	@Override
-	public double calcularTotales(Factura factura) {
-		return 0;
-	}
+    @Override
+    public double calcularMontoTotal() {
+        return 0;
+    }
 }

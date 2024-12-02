@@ -2,10 +2,9 @@ package funcionamiento;
 
 public interface ManejadorDeClientes {
 	
-	void registrarCliente(Cliente cliente);
-	
-	Cliente consultarCliente(int idCliente);
-	
-	void actualizarCliente(Cliente cliente);
-
+	void saveClient(Cliente cliente);
+	void editClient(Cliente cliente);
+	void deleteClient(Cliente cliente);
+	void limpiarCampos();
+	void loadEvents();
 }

@@ -3,8 +3,9 @@ package paneles;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Statement;
+import funcionamiento.ManejadorDeInventario;
 import funcionamiento.Producto;
-import gui.ConexionDB;
+import db.*;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,9 +13,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class InventarioPanel extends JPanel {
-	
-    private DefaultTableModel model;
+public class InventarioPanel extends JPanel implements ManejadorDeInventario {
+
+	private static final long serialVersionUID = 1L;
+	private static final Producto Producto = null;
+	private DefaultTableModel model;
     private JTable productos;
     private JButton btnNuevo, btnImprimir, btnGuardar, btnCerrar, btnEditar, btnEliminar;
     private JPanel AgregarProductoPanel;
@@ -23,6 +26,7 @@ public class InventarioPanel extends JPanel {
     private JScrollPane scrollPane;
     static ArrayList<Producto> producto = new ArrayList<>();
     private Connection conn;
+    private Runnable onProductoActualizado;
 
     public InventarioPanel(JPanel Mainpanel) {
     	conn = ConexionDB.getConnection();
@@ -34,7 +38,7 @@ public class InventarioPanel extends JPanel {
     }
 
     private void initComponents() {
-        // Botones
+
         btnNuevo = new JButton("Nuevo");
         btnNuevo.setBounds(50, 59, 104, 37);
         add(btnNuevo);
@@ -51,7 +55,6 @@ public class InventarioPanel extends JPanel {
         btnEliminar.setBounds(282, 59, 104, 37);
         add(btnEliminar);
 
-        // Tabla y modelo
         model = new DefaultTableModel();
         model.addColumn("ID");
         model.addColumn("Nombre");
@@ -65,7 +68,6 @@ public class InventarioPanel extends JPanel {
         scrollPane.setBounds(50, 161, 600, 289);
         this.add(scrollPane);
 
-        // Panel para agregar productos
         AgregarProductoPanel = new JPanel();
         AgregarProductoPanel.setBounds(50, 164, 600, 300);
         AgregarProductoPanel.setBackground(Color.WHITE);
@@ -112,12 +114,15 @@ public class InventarioPanel extends JPanel {
         AgregarProductoPanel.add(btnGuardar);
     }
 
+    // Método para hacer que los ActionListeners funcionen llamando los métodos
+    
     private void configureActionListeners() {
         btnNuevo.addActionListener(e -> showAddProductPanel());
         btnCerrar.addActionListener(e -> showProductTable());
-        btnGuardar.addActionListener(e -> saveProduct());
-        btnEditar.addActionListener(e -> editProduct());
-        btnEliminar.addActionListener(e -> deleteProduct());
+        btnGuardar.addActionListener(e -> saveProduct(Producto));
+        btnEditar.addActionListener(e -> editProduct(Producto));
+        btnEliminar.addActionListener(e -> deleteProduct(Producto));
+        btnImprimir.addActionListener(e -> Imprimir());
     }
 
     private void showAddProductPanel() {
@@ -133,8 +138,21 @@ public class InventarioPanel extends JPanel {
         revalidate();
         repaint();
     }
+    
+    private void Imprimir() {
+        try {
+            String query = "SELECT * FROM producto";
+            Connection conn = ConexionDB.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ConexionDB.imprimirProductoEnArchivo(rs);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al imprimir: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-    private void saveProduct() {
+    @Override
+    public void saveProduct(Producto producto) {
         if (validarCampos()) {
             String nombre = textFieldNombre.getText();
             String marca = textFieldMarca.getText();
@@ -157,6 +175,11 @@ public class InventarioPanel extends JPanel {
                         int id = rs.getInt(1);
                         model.addRow(new Object[]{id, nombre, marca, precio, cantidad});
                         JOptionPane.showMessageDialog(this, "Producto guardado correctamente con ID: " + id);
+                       
+                        if (onProductoActualizado != null) {
+                            onProductoActualizado.run();
+                        }
+                        
                         limpiarCampos();
                     }
                 }
@@ -166,7 +189,8 @@ public class InventarioPanel extends JPanel {
         }
     }
 
-    private void editProduct() {
+    @Override
+    public void editProduct(Producto producto) {
         int selectedRow = productos.getSelectedRow();
         if (selectedRow != -1) {
             try {
@@ -233,6 +257,11 @@ public class InventarioPanel extends JPanel {
                         int rowsAffected = stmt.executeUpdate();
                         if (rowsAffected > 0) {
                             JOptionPane.showMessageDialog(this, "Producto actualizado correctamente.");
+                            
+                            if (onProductoActualizado != null) {
+                                onProductoActualizado.run();
+                            }
+                            
                         } else {
                             JOptionPane.showMessageDialog(this, "Error al actualizar el producto.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
@@ -248,7 +277,8 @@ public class InventarioPanel extends JPanel {
         }
     }
 
-    private void deleteProduct() {
+    @Override
+    public void deleteProduct(Producto producto) {
         int selectedRow = productos.getSelectedRow();
         if (selectedRow != -1) {
             int idProducto = (int) model.getValueAt(selectedRow, 0);
@@ -263,6 +293,11 @@ public class InventarioPanel extends JPanel {
                     if (rowsAffected > 0) {
                         model.removeRow(selectedRow);
                         JOptionPane.showMessageDialog(this, "Producto eliminado correctamente.");
+                        
+                        if (onProductoActualizado != null) {
+                            onProductoActualizado.run();
+                        }
+                        
                     } else {
                         JOptionPane.showMessageDialog(this, "Error al eliminar el producto.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -275,7 +310,8 @@ public class InventarioPanel extends JPanel {
         }
     }
     
-    private boolean validarCampos() {
+    @Override
+    public boolean validarCampos() {
         if (textFieldNombre.getText().isEmpty() || textFieldPrecio.getText().isEmpty() || textFieldCantidad.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -289,17 +325,19 @@ public class InventarioPanel extends JPanel {
         }
         return true;
     }
-    
-    private void limpiarCampos() {
+
+    @Override
+    public void limpiarCampos() {
     	textFieldNombre.setText("");
     	textFieldMarca.setText("");
     	textFieldPrecio.setText("");
     	textFieldCantidad.setText("");
     }
 
-    private void loadEvents() {
+    @Override
+    public void loadEvents() {
         try {
-            model.setRowCount(0);  // Limpiar la tabla antes de cargar nuevos datos
+            model.setRowCount(0);
             String query = "SELECT * FROM producto";
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -318,7 +356,16 @@ public class InventarioPanel extends JPanel {
         }
     }
     
-    private int generarNuevoID() {
-        return producto.size() + 1;
+    // Método para actualizar el inventario una vez que se haga una factura
+    
+    public void recargarInventario() {
+        loadEvents(); // Actualiza los datos en la tabla del inventario
+        JOptionPane.showMessageDialog(this, "El inventario ha sido actualizado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    // Método para poder actualizar el ComboBox de Producto en otros panel (FacturaClientePanel)
+ 
+    public void setOnProductoActualizado(Runnable onProductoActualizado) {
+        this.onProductoActualizado = onProductoActualizado;
     }
 }

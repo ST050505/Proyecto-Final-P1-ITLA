@@ -3,8 +3,11 @@ package paneles;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import funcionamiento.Cliente;
-import gui.ConexionDB;
+import funcionamiento.ManejadorDeClientes;
+import db.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,9 +15,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class ClientePanel extends JPanel {
+public class ClientePanel extends JPanel implements ManejadorDeClientes {
 	
-    private DefaultTableModel model;
+    private static final Cliente Cliente = null;
+	private DefaultTableModel model;
     private JTable clientes;
     private JButton btnNuevo, btnImprimir, btnGuardar, btnCerrar, btnEditar, btnEliminar;
     private JPanel AgregarClientePanel;
@@ -23,6 +27,7 @@ public class ClientePanel extends JPanel {
     private JScrollPane scrollPane;
     static ArrayList<Cliente> cliente = new ArrayList<>();
     private Connection conn;
+    private Runnable onClienteActualizado;
 
     public ClientePanel(JPanel Mainpanel) {
     	conn = ConexionDB.getConnection();
@@ -34,7 +39,7 @@ public class ClientePanel extends JPanel {
     }
 
     private void initComponents() {
-        // Botones
+
         btnNuevo = new JButton("Nuevo");
         btnNuevo.setBounds(50, 59, 104, 37);
         add(btnNuevo);
@@ -51,7 +56,6 @@ public class ClientePanel extends JPanel {
         btnEliminar.setBounds(282, 59, 104, 37);
         add(btnEliminar);
 
-        // Tabla y modelo
         model = new DefaultTableModel();
         model.addColumn("ID");
         model.addColumn("Nombre");
@@ -65,7 +69,6 @@ public class ClientePanel extends JPanel {
         scrollPane.setBounds(50, 161, 600, 289);
         this.add(scrollPane);
 
-        // Panel para agregar clientes
         AgregarClientePanel = new JPanel();
         AgregarClientePanel.setBounds(50, 164, 600, 300);
         AgregarClientePanel.setBackground(Color.WHITE);
@@ -115,9 +118,10 @@ public class ClientePanel extends JPanel {
     private void configureActionListeners() {
         btnNuevo.addActionListener(e -> showAddClientPanel());
         btnCerrar.addActionListener(e -> showClientTable());
-        btnGuardar.addActionListener(e -> saveClient());
-        btnEditar.addActionListener(e -> editClient());
-        btnEliminar.addActionListener(e -> deleteClient());
+        btnGuardar.addActionListener(e -> saveClient(Cliente));
+        btnEditar.addActionListener(e -> editClient(Cliente));
+        btnEliminar.addActionListener(e -> deleteClient(Cliente));
+        btnImprimir.addActionListener(e -> Imprimir());
     }
 
     private void showAddClientPanel() {
@@ -133,8 +137,22 @@ public class ClientePanel extends JPanel {
         revalidate();
         repaint();
     }
+    
+    private void Imprimir() {
+        try {
+            String query = "SELECT * FROM cliente"; // Cambia por tu consulta deseada
+            Connection conn = ConexionDB.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ConexionDB.imprimirClientesEnArchivo(rs);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al imprimir: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-    private void saveClient() {
+
+    @Override
+    public void saveClient(Cliente cliente) {
         if (validarCampos()) {
             String nombre = textFieldNombre.getText();
             String correo = textFieldCorreo.getText();
@@ -157,6 +175,11 @@ public class ClientePanel extends JPanel {
                         int id = rs.getInt(1);
                         model.addRow(new Object[]{id, nombre, correo, direccion, PI});
                         JOptionPane.showMessageDialog(this, "Cliente guardado correctamente con ID: " + id);
+                        
+                        if (onClienteActualizado != null) {
+                            onClienteActualizado.run();
+                        }
+                        
                         limpiarCampos();
                     }
                 }
@@ -166,7 +189,8 @@ public class ClientePanel extends JPanel {
         }
     }
 
-    private void editClient() {
+    @Override
+    public void editClient(Cliente cliente) {
         int selectedRow = clientes.getSelectedRow();
         if (selectedRow != -1) {
             try {
@@ -222,6 +246,11 @@ public class ClientePanel extends JPanel {
                         int rowsAffected = stmt.executeUpdate();
                         if (rowsAffected > 0) {
                             JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente.");
+                            
+                            if (onClienteActualizado != null) {
+                                onClienteActualizado.run();
+                            }
+                            
                         } else {
                             JOptionPane.showMessageDialog(this, "Error al actualizar el cliente.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
@@ -237,35 +266,54 @@ public class ClientePanel extends JPanel {
         }
     }
 
-    private void deleteClient() {
+    @Override
+    public void deleteClient(Cliente cliente) {
         int selectedRow = clientes.getSelectedRow();
-        if (selectedRow != -1) {
-            int idCliente = (int) model.getValueAt(selectedRow, 0);
-
-            int confirmacion = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar este cliente?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
-            if (confirmacion == JOptionPane.YES_OPTION) {
-                String query = "DELETE FROM cliente WHERE id_cliente = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setInt(1, idCliente);
-                    int rowsAffected = stmt.executeUpdate();
-
-                    if (rowsAffected > 0) {
-                        model.removeRow(selectedRow);
-                        JOptionPane.showMessageDialog(this, "Cliente eliminado correctamente.");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Error al eliminar el cliente.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(this, "Error al eliminar el cliente: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        } else {
+        if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Por favor, selecciona un cliente para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int idCliente = (int) model.getValueAt(selectedRow, 0);
+
+        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar este cliente y todas las facturas asociadas?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        String deleteFacturasQuery = "DELETE FROM factura WHERE id_cliente = ?";
+        String deleteClienteQuery = "DELETE FROM cliente WHERE id_cliente = ?";
+
+        try (PreparedStatement deleteFacturasStmt = conn.prepareStatement(deleteFacturasQuery);
+             PreparedStatement deleteClienteStmt = conn.prepareStatement(deleteClienteQuery)) {
+
+            // Eliminar las facturas asociadas
+            deleteFacturasStmt.setInt(1, idCliente);
+            deleteFacturasStmt.executeUpdate();
+
+            // Eliminar el cliente
+            deleteClienteStmt.setInt(1, idCliente);
+            int rowsAffected = deleteClienteStmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                model.removeRow(selectedRow);
+                JOptionPane.showMessageDialog(this, "Cliente y facturas asociadas eliminados correctamente.");
+
+                if (onClienteActualizado != null) {
+                    onClienteActualizado.run();
+                }
+                
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo encontrar el cliente para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al eliminar el cliente: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
     }
-    
-    
-    private boolean validarCampos() {
+
+    public boolean validarCampos() {
         if (textFieldNombre.getText().isEmpty() || textFieldCorreo.getText().isEmpty() || textFieldDireccion.getText().isEmpty() || textFieldPI.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -273,16 +321,18 @@ public class ClientePanel extends JPanel {
         return true;
     }
     
-    private void limpiarCampos() {
+    @Override
+    public void limpiarCampos() {
     	textFieldNombre.setText("");
     	textFieldCorreo.setText("");
     	textFieldDireccion.setText("");
     	textFieldPI.setText("");
     }
     
-    private void loadEvents() {
+    @Override
+    public void loadEvents() {
         try {
-            model.setRowCount(0);  // Limpiar la tabla antes de cargar nuevos datos
+            model.setRowCount(0);
             String query = "SELECT * FROM cliente";
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -299,9 +349,22 @@ public class ClientePanel extends JPanel {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al cargar los eventos: " + e.getMessage());
         }
+    } 
+    
+    public void setOnClienteActualizado(Runnable onClienteActualizado) {
+        this.onClienteActualizado = onClienteActualizado;
     }
-
-    private int generarNuevoID() {
-        return cliente.size() + 1;
+    
+    public static void abrirArchivo(String rutaArchivo) {
+        try {
+            File file = new File("C:\\Users\\sebas\\Downloads\\proyecto_final.txt");
+            if (file.exists()) {
+                Desktop.getDesktop().open(file);  // Abre el archivo con la aplicación predeterminada
+            } else {
+                System.out.println("El archivo no existe en la ruta: " + rutaArchivo);
+            }
+        } catch (IOException e) {
+            System.out.println("Error al intentar abrir el archivo: " + e.getMessage());
+        }
     }
 }
