@@ -13,9 +13,11 @@ import db.*;
 public class Gui {
 
     JFrame frame;
-    JPanel sidebar, dropdownPanel;
-    boolean isDropdownVisible = false;
-    private JButton dashboardButton;
+    private JLabel opcion1, opcion2, opcion3;
+    private JPanel sidebar, dropdownPanel, Mainpanel, panelBlanco;
+    private CardLayout cardLayout;
+    private boolean isDropdownVisible = false;
+    private JButton dashboardButton, about;
     private InventarioPanel inventarioPanel;
     private FacturaClientePanel facturaClientePanel;
     private ClientePanel clientePanel;
@@ -66,22 +68,22 @@ public class Gui {
         sidebar.add(dropdownPanel);
         dropdownPanel.setLayout(null);
         
-        JLabel opcion1 = new JLabel("Inventario");
+        opcion1 = new JLabel("Inventario");
         opcion1.setBounds(0, 0, 180, 64);
         opcion1.setForeground(Color.WHITE);
         opcion1.setFont(new Font("Verdana", Font.BOLD, 14));
         dropdownPanel.add(opcion1);
         
-        JLabel opcion2 = new JLabel("Factura a cliente");
+        opcion2 = new JLabel("Factura a cliente");
         opcion2.setHorizontalAlignment(SwingConstants.CENTER);
-        opcion2.setBounds(0, 54, 180, 45);
+        opcion2.setBounds(0, 105, 180, 45);
         opcion2.setForeground(Color.WHITE);
         opcion2.setFont(new Font("Arial", Font.PLAIN, 14));
         dropdownPanel.add(opcion2);
         
-        JLabel opcion3 = new JLabel("Cliente");
+        opcion3 = new JLabel("Cliente");
         opcion3.setHorizontalAlignment(SwingConstants.CENTER);
-        opcion3.setBounds(0, 110, 180, 28);
+        opcion3.setBounds(0, 63, 180, 28);
         opcion3.setForeground(new Color(255, 255, 255));
         opcion3.setFont(new Font("Arial", Font.PLAIN, 14));
         dropdownPanel.add(opcion3);
@@ -96,8 +98,11 @@ public class Gui {
         dropdownPanel.add(opcion2);
         dropdownPanel.add(opcion3);
         
-        CardLayout cardLayout = new CardLayout();
-        JPanel Mainpanel = new JPanel(cardLayout);
+        cardLayout = new CardLayout();
+        Mainpanel = new JPanel(cardLayout);
+        
+        panelBlanco = new JPanel();
+        panelBlanco.setBackground(Color.WHITE); // Configura el color de fondo blanco
        
         Mainpanel.setBounds(260, 11, 717, 541);
         frame.getContentPane().add(Mainpanel);
@@ -128,6 +133,28 @@ public class Gui {
         dashboardButton.setFocusPainted(false);
         dashboardButton.setFont(new Font("Arial", Font.BOLD, 16));
         dashboardButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        about = new JButton("About Us");
+        about.setForeground(Color.WHITE);
+        about.setFont(new Font("Arial", Font.BOLD, 16));
+        about.setFocusPainted(false);
+        about.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        about.setBackground(new Color(45, 48, 54));
+        about.setBounds(30, 505, 180, 30);
+        sidebar.add(about);
+        
+        about.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, 
+                    "Los creadores de este programa son:\n\n" +
+                    "Karla Michelle Virgil Bencosme (2024 - 0066)\n" +
+                    "Joel Sebastian Tineo Severino (2024 - 0162)", 
+                    "Acerca de nosotros", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
 
         // ActionListener para mostrar u ocultar el menú desplegable
         

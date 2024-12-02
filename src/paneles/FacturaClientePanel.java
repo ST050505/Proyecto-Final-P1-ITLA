@@ -29,6 +29,7 @@ public class FacturaClientePanel extends JPanel implements ManejadorDeFacturacio
     private JScrollPane scrollPane;
     private Connection conn;
     private Runnable onActualizarInventario;
+    private JLabel lblFacturacin;
 
 
     public FacturaClientePanel(JPanel Mainpanel) {
@@ -46,7 +47,7 @@ public class FacturaClientePanel extends JPanel implements ManejadorDeFacturacio
 
         // Panel de facturación
         FacturarPanel = new JPanel();
-        FacturarPanel.setBounds(40, 51, 630, 451);
+        FacturarPanel.setBounds(40, 40, 640, 462);
         FacturarPanel.setLayout(null);
         FacturarPanel.setVisible(true);
         add(FacturarPanel);
@@ -64,81 +65,87 @@ public class FacturaClientePanel extends JPanel implements ManejadorDeFacturacio
         facturas = new JTable(model);
         
         scrollPane = new JScrollPane(facturas);
-        scrollPane.setBounds(33, 271, 576, 159);
+        scrollPane.setBounds(33, 262, 576, 168);
         FacturarPanel.add(scrollPane);     
         
         lblCliente = new JLabel("Cliente");
         lblCliente.setHorizontalAlignment(SwingConstants.CENTER);
-        lblCliente.setBounds(197, 111, 43, 14);
+        lblCliente.setBounds(197, 150, 43, 20);
         FacturarPanel.add(lblCliente);
 
         lblProducto = new JLabel("Producto");
         lblProducto.setHorizontalAlignment(SwingConstants.CENTER);
-        lblProducto.setBounds(33, 22, 49, 20);
+        lblProducto.setBounds(35, 70, 49, 20);
         FacturarPanel.add(lblProducto);
 
         textFieldMonto = new JTextField();
-        textFieldMonto.setBounds(343, 45, 56, 31);
+        textFieldMonto.setBounds(342, 90, 56, 31);
         FacturarPanel.add(textFieldMonto);
 
         lblCantidad = new JLabel("Cantidad");
         lblCantidad.setHorizontalAlignment(SwingConstants.CENTER);
-        lblCantidad.setBounds(342, 25, 53, 14);
+        lblCantidad.setBounds(342, 70, 53, 20);
         FacturarPanel.add(lblCantidad);
 
         textFieldMoneda = new JTextField();
-        textFieldMoneda.setBounds(233, 45, 100, 32);
+        textFieldMoneda.setBounds(233, 90, 100, 32);
         FacturarPanel.add(textFieldMoneda);
 
         lblPrecio = new JLabel("Precio");
         lblPrecio.setHorizontalAlignment(SwingConstants.CENTER);
-        lblPrecio.setBounds(233, 25, 43, 14);
+        lblPrecio.setBounds(233, 70, 43, 20);
         FacturarPanel.add(lblPrecio);
 
         textFieldFecha = new JTextField();
-        textFieldFecha.setBounds(409, 45, 90, 31);
+        textFieldFecha.setBounds(408, 90, 90, 31);
         FacturarPanel.add(textFieldFecha);
 
         lblSubtotal = new JLabel("Subtotal");
         lblSubtotal.setHorizontalAlignment(SwingConstants.CENTER);
-        lblSubtotal.setBounds(408, 25, 49, 14);
+        lblSubtotal.setBounds(409, 70, 49, 20);
         FacturarPanel.add(lblSubtotal);
 
         // Botones en el FacturarPanel
         btnFacturar = new JButton("Facturar");
-        btnFacturar.setBounds(509, 176, 100, 31);
+        btnFacturar.setBounds(509, 211, 100, 31);
         FacturarPanel.add(btnFacturar);
                 
         CBCliente = new JComboBox();
-        CBCliente.setBounds(197, 135, 302, 32);
+        CBCliente.setBounds(197, 170, 302, 32);
         FacturarPanel.add(CBCliente);
                 
         CBProducto = new JComboBox();
-        CBProducto.setBounds(33, 45, 190, 31);
+        CBProducto.setBounds(33, 90, 190, 31);
         FacturarPanel.add(CBProducto);
                 
         textField = new JTextField();
         textField.setText("");
-        textField.setBounds(509, 45, 100, 31);
+        textField.setBounds(509, 90, 100, 31);
         FacturarPanel.add(textField);
                 
         lblImpuestos = new JLabel("Impuestos");
         lblImpuestos.setHorizontalAlignment(SwingConstants.CENTER);
-        lblImpuestos.setBounds(509, 25, 62, 14);
+        lblImpuestos.setBounds(509, 70, 62, 20);
         FacturarPanel.add(lblImpuestos);
                 
         textPane = new JTextPane();
-        textPane.setBounds(509, 135, 100, 31);
+        textPane.setBounds(509, 170, 100, 31);
         FacturarPanel.add(textPane);
                 
         lblTotal = new JLabel("Total a pagar");
         lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
-        lblTotal.setBounds(509, 111, 71, 14);
+        lblTotal.setBounds(510, 150, 71, 20);
         FacturarPanel.add(lblTotal);
         
         btnImprimir = new JButton("Control de Stock");
-        btnImprimir.setBounds(374, 176, 125, 31);
+        btnImprimir.setBounds(374, 211, 125, 31);
         FacturarPanel.add(btnImprimir);
+        
+        lblFacturacin = new JLabel("FACTURACIÓN");
+        lblFacturacin.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lblFacturacin.setHorizontalAlignment(SwingConstants.CENTER);
+        lblFacturacin.setBounds(255, 25, 130, 25);
+        FacturarPanel.add(lblFacturacin);
                    
     }
 
